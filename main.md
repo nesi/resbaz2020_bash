@@ -76,6 +76,23 @@ myvar="is a variable"
 echo "This ${myvar}."
 ```
 
+### Arithmetic Expansion
+Statements enclosed within double brackets `$(())` are treated as mathematic expressions.
+
+For example:
+
+```bash {cmd}
+echo $((2+2))
+```
+
+Including the `$` when referencing a variable is optional.
+
+```bash {cmd}
+num1=100
+num2=25
+
+echo "${num1} divided by ${num2} is equal to $((num1/num2))"
+```
 ### Loops
 
 Loops allow us to repeat a command or set of commands.
@@ -118,33 +135,41 @@ done
 
 ### Conditional Logic
 
-We can use `if` statements to control whether or not a block of code is executed.
+We can use `if` `then` `fi` statements to control whether or not a block of code is executed.
+
+`!` is a logical NOT
+
+There are many ways to provide the conditional logic.
 
 Pattern matching...
 
 ```bash {cmd}
 my_name="Callum"
 if [[ "$my_name" == C* ]]
-then
+then 
     echo "That is a good name"
-else
-    echo "That is an ok name"
 fi
 ```
 
-Arathmatic tests...
+Arithmetic tests...
 
 ```bash {cmd}
 n=9
 if (( n > 10 ))
 then
-    echo "$n is greater than 10"
-else
     echo "$n is not greater than 10"
 fi
 ```
 
+Return codes and subshells...
+```bash{cmd}
+if ! mkdir "new_directory"
+then
+    echo "directory could not be made."
+fi
 
+We will cover more of this later.
+```
 ### Arithmetic
 
 
@@ -155,7 +180,19 @@ fi
 ```bash {cmd}
 ./e2_multiply.sh 10 5
 ```
+## Workflow
+### Arguments
 
+Anything following the calling of a script is an *argument*.
+Seperated by space (unless in "double quotes").
+
+```bash
+./my_script.sh argument1 argument2 "argument3. still argument3"
+```
+
+The value of the first argument is assigned to `$1` within your script, the second `$2` and so on ....
+The name of the script itself is assigned to `$0`.
+The number of arguments is assigned to `$#`.
 
 
 ### Local
@@ -173,18 +210,6 @@ fi
 ## Stdin, stdout, stderr, exit codes, arguments
 
 ## Variables
-### Arguments
-
-Anything following the calling of a script is an *argument*.
-Seperated by space (unless in "double quotes").
-
-```bash
-./my_script.sh argument1 argument2 "argument3. still argument3"
-```
-
-The value of the first argument is assigned to `$1` within your script, the second `$2` and so on ....
-The name of the script itself is assigned to `$0`.
-The number of arguments is assigned to `$#`.
 
 ### 
 ### Pipes
