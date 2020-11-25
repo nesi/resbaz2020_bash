@@ -3,10 +3,17 @@
 ***Questions***
 
 * How can I ...
+    - Save commands for later?
+    - Automate tedious command line work?
+
 
 ***Objectives***
 
-* Get gud ... 
+* You will learn ...
+    - How to run a bash script
+    - Basic structures (logic, loops, etc)
+    - How to make and use aliases
+    - How to make and use functions
 
 
 ### What is a Bash script?
@@ -23,18 +30,21 @@ Everything is *text*.
 
 Scripts can be run using the `bash` command e.g:
 
-```bash {cmd}
+```bash {}
 bash e1_whatis.sh
+```
+```bash {}
+bash ~/resbaz_bash_2020/e1_whatis.sh
 ```
 
 Or by calling them directly:
-```bash {cmd}
+```bash {}
 ~/resbaz_bash_2020/e1_whatis.sh
 ```
 
 For a script in the same directory as you:
 
-```bash {cmd}
+```bash {}
 ./e1_whatis.sh
 ```
 
@@ -115,7 +125,7 @@ n_files=$(ls -I */ | wc -w)
 echo "There are ${n_dir} directories and ${n_files} files in $(pwd)"
 ```
 
-Subshells are child proccesses that inherit the enviromenent of their parent.
+Subshells are child processes that inherit the environment of their parent.
 
 Subshells are very cool.
 
@@ -216,10 +226,7 @@ fi
 
 Boolean operators.
 
--n
--z
--w
--eq, -lt, -gt, -ne, 
+-n, -z, -w, -eq, -lt, -gt, -ne, 
 
 
 Return codes and subshells...
@@ -232,19 +239,17 @@ fi
 
 We will cover more of this later.
 
-Avoid sing square brakcets
-
-Pause for questions.
 ---
 [`e2_basics.sh`](./e2_basics.sh)
 
 @import "./e2_basics.sh"
-
+---
+**Questions!?**
 ### Workflows
 #### Arguments
 
 When running a script anything following the name of the script is an *argument*.
-Seperated by space (unless in "double quotes").
+Separated by space (unless in "double quotes").
 
 ```bash
 ./my_script.sh argument1 argument2 "argument3. Still argument3"
@@ -269,74 +274,6 @@ Your scripts can be piped filtered or redirected just like any other command.
 
 ```bash {cmd}
 ./e3_multiply.sh 5 5 > output.txt
-```
-
-#### Functions
-
-# functions from callums bashrc
-Functions allow re-use of segment of code.
-Function *similarly* to scripts in that they can take arguments.
-
-They must be defined before they are used.
-
-```bash {cmd}
-sum(){
-    total=0
-    for num in $@
-    do
-        ((total+=num))
-    done
-    echo "$total"
-}
-
-sum 15 9 18
-```
-
-```
-function exitstatus() {
-        EXITSTATUS="$?"
-        echo -ne "\033]0;${HOSTNAME}\007"
-        BOLD="\[\033[1m\]"
-        RED="\[\033[1;31m\]"
-        GREEN="\[\e[32;1m\]"
-        BLUE="\[\e[34;1m\]"
-        OFF="\[\033[m\]"
-        LINE="\n" #\e]2;\$(pwd)\a\e]1;\$(pwd)\a$GREEN\$(s=\$(printf "%*s" \$COLUMNS); echo \${s// /―})\n\e[0m"
-        PROMPT="${PROMPT_PREFIX}${BOLD}[\h \W"
-        if [ $EXITSTATUS -eq 0 ]
-        then
-                PS1="${LINE}${PROMPT}${GREEN} SUCCESS${OFF}${BOLD} ]\$${OFF} "
-        else
-                PS1="${PROMPT}${RED} FAILURE${OFF}${BOLD} ]\$${OFF} "
-        fi
-        PS2="${BOLD}>${OFF} "
-        }
-
-PROMPT_COMMAND=exitstatus
-```
-
-```bash
-function wess(){
-        # Watches thing
-        watch -cd -n 0.1 tail -n 50 $1 
-}
-```
-```bash
-function les(){
-        #runs 'less' on most recent file
-        less $(ls -at | head -1)
-}
-```
-```bash
-function wes(){
-        # Watches most recent thing.
-        watch -cd -n 0.1 tail -n 50 $(ls -at | head -1)
-}
-```
-```bash
-mkcd() { 
-    mkdir -p "$@" && cd "$@"
-}
 ```
 
 # ~~Bash scripting~~ and how to avoid it
@@ -525,9 +462,6 @@ Helpful tips for productivity
 alias synergize="curl -sL http://cbsg.sf.net | grep -Eo '^<li>(.*)</li>' | sed "s/\<li\>//g" | sed "s/\<\/li\>//g" | gshuf -n1"
 ```
 
-
-
-
 ```bash
 alias weather='curl wttr.in'
 ```
@@ -628,3 +562,71 @@ cat bar >> foo
 #### Editors
 #### Backgrounding and Foregrounding 
 #### Jobs, Kill, ps
+```
+function exitstatus() {
+        EXITSTATUS="$?"
+        echo -ne "\033]0;${HOSTNAME}\007"
+        BOLD="\[\033[1m\]"
+        RED="\[\033[1;31m\]"
+        GREEN="\[\e[32;1m\]"
+        BLUE="\[\e[34;1m\]"
+        OFF="\[\033[m\]"
+        LINE="\n" #\e]2;\$(pwd)\a\e]1;\$(pwd)\a$GREEN\$(s=\$(printf "%*s" \$COLUMNS); echo \${s// /―})\n\e[0m"
+        PROMPT="${PROMPT_PREFIX}${BOLD}[\h \W"
+        if [ $EXITSTATUS -eq 0 ]
+        then
+                PS1="${LINE}${PROMPT}${GREEN} SUCCESS${OFF}${BOLD} ]\$${OFF} "
+        else
+                PS1="${PROMPT}${RED} FAILURE${OFF}${BOLD} ]\$${OFF} "
+        fi
+        PS2="${BOLD}>${OFF} "
+        }
+
+PROMPT_COMMAND=exitstatus
+```
+#### Functions
+
+```bash {cmd}
+sum(){
+    total=0
+    for num in $@
+    do
+        ((total+=num))
+    done
+    echo "$total"
+}
+
+sum 15 9 18
+```
+
+# functions from callums bashrc
+Functions allow re-use of segment of code.
+Function *similarly* to scripts in that they can take arguments.
+
+They must be defined before they are used.
+
+
+
+```bash
+function wess(){
+        # Watches thing
+        watch -cd -n 0.1 tail -n 50 $1 
+}
+```
+```bash
+function les(){
+        #runs 'less' on most recent file
+        less $(ls -at | head -1)
+}
+```
+```bash
+function wes(){
+        # Watches most recent thing.
+        watch -cd -n 0.1 tail -n 50 $(ls -at | head -1)
+}
+```
+```bash
+mkcd() { 
+    mkdir -p "$@" && cd "$@"
+}
+```
