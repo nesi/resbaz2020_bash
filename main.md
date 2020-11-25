@@ -1,7 +1,12 @@
 ## Bash scripting and how to avoid it
 
--Objectives
--Questions this will answer
+***Questions***
+
+* How can I ...
+
+***Objectives***
+
+* Get gud ... 
 
 
 ### What is a Bash script?
@@ -57,7 +62,6 @@ chmod u+x e1_whatis.sh
 
 ### Basics
 
-[`e2_basics.sh`](./e2_basics.sh)
 
 #### Comments
 
@@ -188,7 +192,9 @@ We can use `if` `then` `fi` statements to control whether or not a block of code
 
 There are many ways to provide the conditional logic.
 
-Pattern matching...
+Pattern matching ``[[ ]]``
+*(Old style `[ ]` should be avoided!)*
+
 
 ```bash {cmd}
 my_name="Callum"
@@ -198,13 +204,13 @@ then
 fi
 ```
 
-Arithmetic tests...simple
+Arithmetic tests ``(( ))``
 
 ```bash {cmd}
 n=9
 if (( n < 10 ))
 then
-    echo "$n is not greater than 10"
+    echo "$n is less than 10"
 fi
 ```
 
@@ -230,13 +236,11 @@ Avoid sing square brakcets
 
 Pause for questions.
 ---
+[`e2_basics.sh`](./e2_basics.sh)
 
-```bash{cmd}
-./e2_basics.sh
-```
+@import "./e2_basics.sh"
+
 ### Workflows
-[`e3_multiply.sh`](./e3_multiply.sh)
-
 #### Arguments
 
 When running a script anything following the name of the script is an *argument*.
@@ -245,21 +249,20 @@ Seperated by space (unless in "double quotes").
 ```bash
 ./my_script.sh argument1 argument2 "argument3. Still argument3"
 ```
-make this an ac tual thing.
+make this an actual thing.
 
 Within your script, the value of the first argument is assigned to the variable `$1`, the second `$2` and so on ....
 The name of the script itself is assigned to `$0`.
 The total number of arguments is assigned to `$#`.
 All the arguments are included in `$@`.
 
+[`e3_args.sh`](./e3_args.sh) 
+@import "./e3_args.sh"
 
-```bash {cmd}
-./e3_multiply.sh 10 
-```
+Another example.
 
-```bash {cmd}
-./e3_multiply.sh 10 5
-```
+[`e3_multiply.sh`](./e3_multiply.sh) 
+@import "./e3_multiply.sh"
 
 #### Piping 
 Your scripts can be piped filtered or redirected just like any other command.
@@ -270,6 +273,24 @@ Your scripts can be piped filtered or redirected just like any other command.
 
 #### Functions
 
+
+### Common Problems
+
+
+
+Can be put inside your `.bash_profile` (coming soon).
+
+### .bash_profile vs .bashrc
+Say or may not have .bash profile.
+
+### Sourcing
+Thing you have to do.
+
+#### Functions
+Example of function in bash rc.
+Unwealdy to enter on cmdline
+
+# functions from callums bashrc
 Functions allow re-use of segment of code.
 Function *similarly* to scripts in that they can take arguments.
 
@@ -288,26 +309,89 @@ sum(){
 sum 15 9 18
 ```
 
-### Common Problems
+```
+function exitstatus() {
+        EXITSTATUS="$?"
+        echo -ne "\033]0;${HOSTNAME}\007"
+        BOLD="\[\033[1m\]"
+        RED="\[\033[1;31m\]"
+        GREEN="\[\e[32;1m\]"
+        BLUE="\[\e[34;1m\]"
+        OFF="\[\033[m\]"
+        LINE="\n" #\e]2;\$(pwd)\a\e]1;\$(pwd)\a$GREEN\$(s=\$(printf "%*s" \$COLUMNS); echo \${s// /―})\n\e[0m"
+        PROMPT="${PROMPT_PREFIX}${BOLD}[\h \W"
+        if [ $EXITSTATUS -eq 0 ]
+        then
+                PS1="${LINE}${PROMPT}${GREEN} SUCCESS${OFF}${BOLD} ]\$${OFF} "
+        else
+                PS1="${PROMPT}${RED} FAILURE${OFF}${BOLD} ]\$${OFF} "
+        fi
+        PS2="${BOLD}>${OFF} "
+        }
 
+PROMPT_COMMAND=exitstatus
+```
 
-
-Can be put inside your `.bash_profile` (coming soon).
-
-### .bash_profile vs .bashrc
-Say or may not have .bash profile.
-
-### Sourcing
-Thing you have to do.
-
-#### Functions
-Example of function in bash rc.
-Unwealdy to enter on cmdline
+```bash
+function wess(){
+        # Watches thing
+        watch -cd -n 0.1 tail -n 50 $1 
+}
+```
+```bash
+function les(){
+        #runs 'less' on most recent file
+        less $(ls -at | head -1)
+}
+```
+```bash
+function wes(){
+        # Watches most recent thing.
+        watch -cd -n 0.1 tail -n 50 $(ls -at | head -1)
+}
+```
+```bash
+mkcd() { 
+    mkdir -p "$@" && cd "$@"
+}
+```
 
 #### Aliases
+Aliases are *text substitutions*.
+You can use them as shortcuts.
+
+When an alias is called, the full text is substituted, then the command is executed.
+
+
 Example of alias.
-Why over function. More of shortcut.
-`alias l=ls`
+
+Overide `rm` with 'interactive' flag.
+```bash {}
+alias rm="rm -i"
+```
+
+Overide `ls` with 'list' flag.
+```bash {}
+alias ls="ls -l"
+```
+
+```bash
+alias synergize="curl -sL http://cbsg.sf.net|grep -Eo '^<li>.*</li>'|sed s,\</\\?li\>,,g|shuf -n1"
+```
+
+Make directory and cd into it
+```bash
+alias mkcd=mkdir -p "$1";cd "$1";
+```
+
+Replaces `cat` command with image of cat.
+```bash
+alias cat="wget -qO - http://placekitten.com/$[500 + RANDOM % 500]|display"
+```
+
+```
+[[ "$(date +%a)" == "$(last $USER|sed -n 2p|awk '{print$4}')" ]]||curl wttr.in
+```
 
 #### One line commands.
 `;` is the same as `enter`
@@ -321,11 +405,17 @@ for thing in cat file;do a thing; done
 ```
 cd ~; ls; cd -;
 ```
+*Note `;` can also be used to form tidyr scripts*
+```bash
+    for a in inputs;do
+        # Do something.
+    done    
+``` 
 
 #### Search history
 ctrl + r "cmd"
 press `ctrl` + `r` again 
-echo histsize=10000 > ~/.bashrc
+echo HISTSIZE=10000 >> ~/.bashrc
 #### Local
 #### Export
 
@@ -342,3 +432,11 @@ A quick note on stdout
 #### Backgrounding and Foregrounding 
 #### Jobs, Kill, Nice, ps
 #### Inheritence
+
+```bash {cmd}
+./e3_multiply.sh 10 
+```
+
+```bash {cmd}
+./e3_multiply.sh 10 5
+```
