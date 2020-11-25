@@ -449,6 +449,12 @@ set is for changing shell options
 set +o noclobber
 ```
 
+Example:
+```bash
+touch foo
+echo "can I clobber foo?" > foo
+```
+
 Local changes
 ```bash
 PS2=">>>>>>>> "
@@ -593,25 +599,30 @@ history | grep "alias"
 it feels safer to me (prints out the command without executing)
 
 
-
-A quick note on stdout
-### Stdin, stdout, stderr, exit codes, arguments
-
-
 #### Pipes
+connects the output of one file to the input of another
+- outputs are *usually* from the stdout stream
+- inputs are *usually* from the stdin stream
+
+Example without a pipe:
+
+```bash
+say "Hello, world" -v Lee
+```
+
+Example with a pipe:
+```bash
+echo "Hello, ResBaz" | say -v Lee
+```
+
 #### Redirects
-#### /dev/null
-#### /dev/tty
+write vs append
+```bash
+echo "hello, world" > bar
+
+cat bar >> foo
+```
+
 #### Editors
-
 #### Backgrounding and Foregrounding 
-#### Jobs, Kill, Nice, ps
-#### Inheritence
-
-```bash {cmd}
-./e3_multiply.sh 10 
-```
-
-```bash {cmd}
-./e3_multiply.sh 10 5
-```
+#### Jobs, Kill, ps
