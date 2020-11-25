@@ -396,6 +396,8 @@ Make changes in `.bash_profile` or `.bashrc`
     - the file may not exist yet, create it
     - generally, `.bash_profile` is sourced once per login shell, and `.bashrc` is sourced every time you open a new terminal window
     - can be the source of mysterious errors
+- there's nothing magic about these files. They're just configurations
+    - bash sources them for you
 
 ### What is "sourcing"?
 - Earlier, Callum taught us about subshells 
