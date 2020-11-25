@@ -1,8 +1,8 @@
-# Bash scripting and how to avoid it
+## Bash scripting and how to avoid it
 
-## What is a Bash script?
+### What is a Bash script?
 
-[`e1_simple.sh`](./e1_simple.sh)
+[`e1_whatis.sh`](./e1_whatis.sh)
 
 Bash scripts are *text* files containing a series of *bash commands*.
 
@@ -15,19 +15,19 @@ Everything is *text*.
 Scripts can be run using the `bash` command e.g:
 
 ```bash {cmd}
-bash e1_simple.sh
+bash e1_whatis.sh
 ```
 
 Or by calling them directly:
 
 ```bash {cmd}
-~/resbaz_bash_2020/e1_simple.sh
+~/resbaz_bash_2020/e1_whatis.sh
 ```
 
 For a script in the same directory as you:
 
 ```bash {cmd}
-./e1_simple.sh
+./e1_whatis.sh
 ```
 
 ---
@@ -39,36 +39,46 @@ Check permissions using:
 ```bash {cmd}
 ls -l
 ```
+The first block `---` are your permissions.
 
 To add execute permissions:
 
 ```bash {cmd}
-chmod u+x e1_simple.sh
+chmod u+x e1_whatis.sh
 ```
 
 (`u`) user (`+`) add (`x`) execute
 
-## Basics
+---
+**Questions!?**
 
-[`e2_multiply.sh`](./e2_multiply.sh)
+### Basics
 
-### Comments
+[`e2_basics.sh`](./e2_basics.sh)
 
-`#` starts a comment. Everything after on the same line is ignored.
+#### Comments
 
+`#` starts a comment. 
+Everything after `#` on the same line is ignored.
 
-### `#!/bin/bash` *shebang*
+```bash {cmd}
+# echo "This is a comment"
+echo "This isn't a comment"
+```
 
-Special comment, always the *first line of a script*.
+#### `#!/bin/bash` *shebang*
 
-Signifies that this text file that should be run by the program called *bash* located in the *bin* directory.
-Flags can be added to the shebang to modify how the code is executed.
+Special type of comment, always the *first line of a script*.
+
+Tells the system this file should be run by the program called *bash* located in the *bin* directory.
+Flags can be added to the `#!/bin/bash` to modify how the code is executed.
 
 `#!/bin/bash -e` Exit script on error.
 `#!/bin/bash -x` Prints commands as executed.
 
-### Variables
-Variables are declared using '=', as you need them. Strings are declared within `""`.
+#### Variables
+Variables are declared using `=`, as you need them. 
+Double quotes `""` ensures the contents are not broken on spaces.
 Variables are referenced using `$` or `${}` (best practice).
 
 ```bash {cmd}
@@ -76,8 +86,37 @@ myvar="is a variable"
 echo "This ${myvar}."
 ```
 
-### Arithmetic Expansion
-Statements enclosed within double brackets `$(())` are treated as mathematic expressions.
+#### Subshells
+
+Single parentheses `$()` will run the enclosed command in a *subshell*.
+Whatever would usually be printed to your terminal will be substituted in place.
+
+A very simple example.
+
+```bash {cmd}
+echo "The current directory is $(pwd)"
+```
+
+Can use pipes, filters, scripts... any bash command.
+
+Generally this is how you will assign variables a value.
+
+```bash {cmd}
+n_dir=$(ls */ | wc -w)
+n_files=$(ls -I */ | wc -w)
+echo "There are ${n_dir} directories and ${n_files} files in $(pwd)"
+```
+
+Subshells are child proccesses that inherit the enviromenent of their parent.
+
+Subshells are very cool.
+
+```bash {cmd}
+echo "this is a $(echo "subshell inside of a $(echo "subshell inside of a $(echo "subshell inside of a $(echo subshell)")")")"
+```
+
+#### Arithmetic Expansion
+Statements enclosed within double brackets `(())` will be evaluated as mathematic expressions. `$(())` will evaluate *and* execute the output.
 
 For example:
 
@@ -85,7 +124,7 @@ For example:
 echo $((2+2))
 ```
 
-Including the `$` when referencing a variable is optional.
+Including the `$` when referencing a *variable* inside `$(())` is optional.
 
 ```bash {cmd}
 num1=100
@@ -93,7 +132,7 @@ num2=25
 
 echo "${num1} divided by ${num2} is equal to $((num1/num2))"
 ```
-### Loops
+#### Loops
 
 Loops allow us to repeat a command or set of commands.
 
@@ -133,7 +172,9 @@ do
 done
 ```
 
-### Conditional Logic
+This is where the bulk of the potential for automation lies.
+
+#### Conditional Logic
 
 We can use `if` `then` `fi` statements to control whether or not a block of code is executed.
 
@@ -151,7 +192,7 @@ then
 fi
 ```
 
-Arithmetic tests...
+Arithmetic tests...simple
 
 ```bash {cmd}
 n=9
@@ -167,64 +208,90 @@ if ! mkdir "new_directory"
 then
     echo "directory could not be made."
 fi
+```
 
 We will cover more of this later.
+
+---
+
+```bash{cmd}
+./e2_basics.sh
 ```
-### Arithmetic
+### Workflows
+[`e3_multiply.sh`](./e3_multiply.sh)
 
+#### Arguments
 
-```bash {cmd}
-./e2_multiply.sh 10 
-```
-
-```bash {cmd}
-./e2_multiply.sh 10 5
-```
-## Workflow
-### Arguments
-
-Anything following the calling of a script is an *argument*.
+When running a script anything following the name of the script is an *argument*.
 Seperated by space (unless in "double quotes").
 
 ```bash
-./my_script.sh argument1 argument2 "argument3. still argument3"
+./my_script.sh argument1 argument2 "argument3. Still argument3"
 ```
 
-The value of the first argument is assigned to `$1` within your script, the second `$2` and so on ....
+Within your script, the value of the first argument is assigned to the variable `$1`, the second `$2` and so on ....
 The name of the script itself is assigned to `$0`.
-The number of arguments is assigned to `$#`.
+The total number of arguments is assigned to `$#`.
+All the arguments are included in `$@`.
 
 
-### Local
+```bash {cmd}
+./e3_multiply.sh 10 
+```
 
-### Export
+```bash {cmd}
+./e3_multiply.sh 10 5
+```
 
-## $((1+1))
+#### Piping 
+Your scripts can be piped filtered or redirected just like any other command.
 
-## Functions
+```bash {cmd}
+./e3_multiply.sh 5 5 > output.txt
+```
+
+#### Functions
+
+Functions allow re-use of segment of code.
+Function *similarly* to scripts in that they can take arguments.
+
+They must be defined before they are used.
+
+```bash {cmd}
+sum(){
+    total=0
+    for num in $@
+    do
+        ((total+=num))
+    done
+    echo "$total"
+}
+
+sum 15 9 18
+```
+
+### Common Problems
 
 
-### 
-## Editors
 
-## Stdin, stdout, stderr, exit codes, arguments
+Can be put inside your `.bash_profile` (coming soon).
 
-## Variables
+### .bash_profile
+#### Functions
+#### Aliases
+#### Search history
+#### One line commands.
 
-### 
-### Pipes
-### Redirects
-### /dev/null
-### /dev/tty
-## Subshells 
+#### Local
+#### Export
 
-## Backgrounding and Foregrounding 
-## Jobs, Kill, Nice, ps
-## Inheritence
-## Aliases 
+### Stdin, stdout, stderr, exit codes, arguments
+#### Pipes
+#### Redirects
+#### /dev/null
+#### /dev/tty
+#### Editors
 
-# Things that would be nice.
-## 
-
-
-# \#!
+#### Backgrounding and Foregrounding 
+#### Jobs, Kill, Nice, ps
+#### Inheritence
