@@ -1,4 +1,4 @@
-## Bash scripting and how to avoid it
+# Bash scripting ~~and how to avoid it~~
 
 ***Questions***
 
@@ -273,23 +273,6 @@ Your scripts can be piped filtered or redirected just like any other command.
 
 #### Functions
 
-
-### Common Problems
-
-
-
-Can be put inside your `.bash_profile` (coming soon).
-
-### .bash_profile vs .bashrc
-Say or may not have .bash profile.
-
-### Sourcing
-Thing you have to do.
-
-#### Functions
-Example of function in bash rc.
-Unwealdy to enter on cmdline
-
 # functions from callums bashrc
 Functions allow re-use of segment of code.
 Function *similarly* to scripts in that they can take arguments.
@@ -356,6 +339,150 @@ mkcd() {
 }
 ```
 
+# ~~Bash scripting~~ and how to avoid it
+Bash isn't just a tool, it's your "home." Personalising your Bash 
+makes it easier and more pleasant to work in the environment
+
+In this half, I am going to go through a bunch of examples
+- don't worry if you don't remember everything
+- the most important take-aways are the concepts, not the commands
+
+#### Splash Screen Example
+
+```
+
+              .,-:;//;:=,
+          . :H@@@MM@M#H/.,+%;,
+       ,/X+ +M@@M@MM%=,-%HMMM@X/,
+     -+@MM; $M@@MH+-,;XMMMM@MMMM@+-
+   ;@M@@M- XM@X;. -+XXXXXHHH@M@M#@/.
+ ,%MM@@MH ,@%=             .---=-=:=,.
+ =@#@@@MX.,                -%HX$$%%%:;
+=-./@M@M$                   .;@MMMM@MM:
+X@/ -$MM/                    . +MM@@@M$
+,@M@H: :@:                    . =X#@@@@- ======================================
+,@@@MMX, .                    /H- ;@M@M= Welcome to Aperture Science, eper363.
+.H@@@@M@+,                    %MM+..%#$. ======================================
+ /MMMM@MMH/.                  XM@MH; =;
+  /%+%$XHH@$=              , .H@@@@MX,
+  .=--------.           -%H.,@@@@@MX,
+   .%MM@@@HHHXX$$$%+- .:$MMX =M@@MM%.
+     =XMMM@MM@MM#H;,-+HMM@M+ /MMMX=
+        =%@M@M#@$-.=MM@@@M; %M%=
+         ,:+$+-,/H#MMMMMMM@= =,
+              =++%%%%+/:-.
+
+==============================================================================
+
+eper363> 
+```
+
+#### Text to Speech Example
+(demo)
+```bash {cmd}
+echo "Hello, ResBaz" | say -v Lee
+```
+
+#### A Clock for the terminal
+(demo)
+```bash {cmd}
+redclock
+```
+
+### How to configure my terminal?
+Make changes in `.bash_profile` or `.bashrc`
+- Your own customisations go in here
+- When in doubt, use `.bash_profile`
+    - the file may not exist yet, create it
+    - generally, `.bash_profile` is sourced once per login shell, and `.bashrc` is sourced every time you open a new terminal window
+    - can be the source of mysterious errors
+
+### What is "sourcing"?
+- Earlier, Callum taught us about subshells 
+- (running and instance of `bash` inside of `bash`)
+- a subshell is created when we run a bash script
+- **in contrast**, sourcing runs the script, or configuration file, in the current shell
+- this is useful because you can set variables, functions, and aliases
+
+```bash {cmd}
+eper363> yellowclock
+-bash: yellowclock: command not found
+eper363> source source_me.sh
+eper363> yellowclock
+```
+
+#### Variables
+Some examples:
+
+`PATH` - where Bash searches for executables
+```bash
+echo $PATH | tr ':' '\n'
+```
+```
+/home/eper363/bin
+/usr/local/sbin
+/usr/local/bin
+/usr/sbin
+/usr/bin
+/sbin
+/bin
+```
+You must append to `PATH` if you want to find executables in arbitrary directories
+- (show my bash_profile and `PATH` variable)
+
+`$PS1` and `$PS2` -  the look and feel of your prompt
+
+```bash
+echo $PS2
+echo $PS1
+```
+
+I like to keep mine simple. There are more complicated examples, like showing your current working directory
+- search for tutorials online and have a go at it
+- decorate, and make Bash your home!
+
+#### Setting Variables 
+
+
+set is for changing shell options
+```bash
+set +o noclobber
+```
+
+Local changes
+```bash
+PS2=">>>>>>>> "
+```
+
+Changes can be exported to child shells.
+Useful for modifying `PATH`
+```bash
+export CLICOLOR=1
+```
+
+show examples in my .bash_profile
+
+#### Functions
+Functions are pieces of code that can be re-used in scripts
+
+Here we will demo some simple functions
+
+One-off functions are  useful when the commands are unwieldy to enter on cmdline
+
+```
+timestamp() {
+  date +'%Y-%m-%d_%H-%M-%S'
+}
+```
+
+```bash {cmd}
+targz() { tar -zcvf $1.tar.gz $1; rm -r $1; }
+untargz() { tar -zxvf $1; rm -r $1; }
+```
+
+`source fn_source_me.sh` and do demo
+
+
 #### Aliases
 Aliases are *text substitutions*.
 You can use them as shortcuts.
@@ -370,54 +497,102 @@ Overide `rm` with 'interactive' flag.
 alias rm="rm -i"
 ```
 
-Overide `ls` with 'list' flag.
-```bash {}
-alias ls="ls -l"
-```
-
-```bash
-alias synergize="curl -sL http://cbsg.sf.net|grep -Eo '^<li>.*</li>'|sed s,\</\\?li\>,,g|shuf -n1"
-```
-
 Make directory and cd into it
 ```bash
 alias mkcd=mkdir -p "$1";cd "$1";
 ```
 
-Replaces `cat` command with image of cat.
-```bash
-alias cat="wget -qO - http://placekitten.com/$[500 + RANDOM % 500]|display"
+Overide `ls` with 'list' flag.
+```bash {}
+alias ls="ls -l"
 ```
 
+ls "tree"
+```bash 
+alias lstree='find ./ -type d -print | sed -e "s;[^/]*/; /;g;s;/ ;    ;g;s;^ /$;.;;s; /;|-- ;g"'
 ```
-[[ "$(date +%a)" == "$(last $USER|sed -n 2p|awk '{print$4}')" ]]||curl wttr.in
+
+Helpful tips for productivity
+```bash
+alias synergize="curl -sL http://cbsg.sf.net | grep -Eo '^<li>(.*)</li>' | sed "s/\<li\>//g" | sed "s/\<\/li\>//g" | gshuf -n1"
 ```
+
+
+
+
+```bash
+alias weather='curl wttr.in'
+```
+
+#### Persistance 
+When you `touch` a file, it stays where it is until it is moved or deleted
+
+Aliases and function do not persist
+
+This is why we put the definitions into our `.bash_profile`, which gets loaded when we log in.
+
 
 #### One line commands.
 `;` is the same as `enter`
 Can compose multiple line commands.
 
 ```bash {cmd}
-
-for thing in cat file;do a thing; done
+# print out zipped files (dry run)
+for f in fastqc/*zip; do echo $f; done
 ```
 
+This can be written in an expanded form:
+```bash
+for f in fastqc/*zip
+    do echo $f
+    done
 ```
-cd ~; ls; cd -;
+
+Your bash command history "remembers" the compact version
+
 ```
-*Note `;` can also be used to form tidyr scripts*
+# unzip compressed files
+for f in fastqc/*zip; do unzip $f; done
+```
+
+*Note `;` can also be used to form tidier scripts*
 ```bash
     for a in inputs;do
         # Do something.
     done    
 ``` 
 
+#### Avoiding Bash Scripting
+I generally do not find myself writing bash scripts often
+- once and a while I need to 
+- most of the time, I use functions, aliases, and one-liners
+
+Caveat
+- if you are doing research, capture all your `bash` commands in a script
+- for repeatability 
+- show an `Example`
+
+
+### Other Tips and Tricks (to help you avoid scripting)
+
 #### Search history
-ctrl + r "cmd"
+to start searching:
+- ctrl + r "cmd"
+
 press `ctrl` + `r` again 
-echo HISTSIZE=10000 >> ~/.bashrc
-#### Local
-#### Export
+- to look farther back in your history
+
+press `[enter]`
+- to run the command again
+
+I prefer to search for commands in my history
+
+```bash
+history | grep "alias"
+```
+it feels safer to me (prints out the command without executing)
+
+
 
 A quick note on stdout
 ### Stdin, stdout, stderr, exit codes, arguments
