@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # $# is equal to the number of input arguments.
-if (($# < 2))
+if (($# != 2))
 then 
     echo "Error: '$0' requires two input arguments!"
     exit 1
@@ -11,7 +11,7 @@ fi
 factor_1=$1
 factor_2=$2
 
-product=$((factor_1* factor_2))
+product=$((factor_1 * factor_2))
 
 echo $product
 #echo "$1 x $2 is equal to ${product}"

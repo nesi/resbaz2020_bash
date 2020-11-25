@@ -19,7 +19,6 @@ bash e1_whatis.sh
 ```
 
 Or by calling them directly:
-
 ```bash {cmd}
 ~/resbaz_bash_2020/e1_whatis.sh
 ```
@@ -89,6 +88,7 @@ echo "This ${myvar}."
 #### Subshells
 
 Single parentheses `$()` will run the enclosed command in a *subshell*.
+A subshell is another instance of bash running inside your script.
 Whatever would usually be printed to your terminal will be substituted in place.
 
 A very simple example.
@@ -124,6 +124,8 @@ For example:
 echo $((2+2))
 ```
 
+
+Insert example of (())
 Including the `$` when referencing a *variable* inside `$(())` is optional.
 
 ```bash {cmd}
@@ -196,11 +198,19 @@ Arithmetic tests...simple
 
 ```bash {cmd}
 n=9
-if (( n > 10 ))
+if (( n < 10 ))
 then
     echo "$n is not greater than 10"
 fi
 ```
+
+Boolean operators.
+
+-n
+-z
+-w
+-eq, -lt, -gt, -ne, 
+
 
 Return codes and subshells...
 ```bash{cmd}
@@ -212,6 +222,9 @@ fi
 
 We will cover more of this later.
 
+Avoid sing square brakcets
+
+Pause for questions.
 ---
 
 ```bash{cmd}
@@ -228,6 +241,7 @@ Seperated by space (unless in "double quotes").
 ```bash
 ./my_script.sh argument1 argument2 "argument3. Still argument3"
 ```
+make this an ac tual thing.
 
 Within your script, the value of the first argument is assigned to the variable `$1`, the second `$2` and so on ....
 The name of the script itself is assigned to `$0`.
@@ -276,16 +290,45 @@ sum 15 9 18
 
 Can be put inside your `.bash_profile` (coming soon).
 
-### .bash_profile
-#### Functions
-#### Aliases
-#### Search history
-#### One line commands.
+### .bash_profile vs .bashrc
+Say or may not have .bash profile.
 
+### Sourcing
+Thing you have to do.
+
+#### Functions
+Example of function in bash rc.
+Unwealdy to enter on cmdline
+
+#### Aliases
+Example of alias.
+Why over function. More of shortcut.
+`alias l=ls`
+
+#### One line commands.
+`;` is the same as `enter`
+Can compose multiple line commands.
+
+```bash {cmd}
+
+for thing in cat file;do a thing; done
+```
+
+```
+cd ~; ls; cd -;
+```
+
+#### Search history
+ctrl + r "cmd"
+press `ctrl` + `r` again 
+echo histsize=10000 > ~/.bashrc
 #### Local
 #### Export
 
+A quick note on stdout
 ### Stdin, stdout, stderr, exit codes, arguments
+
+
 #### Pipes
 #### Redirects
 #### /dev/null
